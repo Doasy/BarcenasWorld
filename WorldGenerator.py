@@ -28,30 +28,37 @@ intersectLocs( [PrevRow|PrevLocs], [NewRow|NewLocs], FinalLocs ) :-\n\
              FinalLocs = [ FinalRow | RestOfRows ].\n\n")
 
 
-def is_Barcenas_around(x, y, n):
+def is_Barcenas_around(x, y, n, smell):
+    if smell == 0: opSmell = 1
+    else: opSmell = 0
     x-=1
     y-=1
     l= []
     for _ in xrange(n):
-        l.append(list(1 for _ in xrange(n)))
+        l.append(list(opSmell for _ in xrange(n)))
     l[0][0] = 0
-    l[x][y] = 0
+    l[x][y] = smell
     if x > 0:
-        l[x-1][y]=0
+        l[x-1][y]=smell
     if x < n-1:
-        l[x+1][y]=0
+        l[x+1][y]=smell
     if y > 0:
-        l[x][y-1]=0
+        l[x][y-1]=smell
     if y < n-1:
-        l[x][y+1]=0
+        l[x][y+1]=smell
     return l
 
+def write_with_semll_X(pl, n, smell):
+    for x in xrange(1, n+1):
+            for y in xrange(1, n+1):
+                pl.write("iSBarcenasAround( "+str(x)+", "+str(y)+", "+str(smell)+", " +\
+    str(is_Barcenas_around(x,y,n,smell))+" ).\n")
 
 def write_Barcenas_around(pl, n):
-    for x in xrange(1, n+1):
-        for y in xrange(1, n+1):
-            pl.write("iSBarcenasAround( "+str(x)+", "+str(y)+", 0, " +\
-str(is_Barcenas_around(x,y,n))+" ).\n")
+    write_with_semll_X(pl, n, 0)
+    pl.write("\n")
+    write_with_semll_X(pl, n, 1)
+    pl.write("\n")
 
 if __name__ == "__main__":
 
