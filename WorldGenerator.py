@@ -28,7 +28,7 @@ intersectLocs( [PrevRow|PrevLocs], [NewRow|NewLocs], FinalLocs ) :-\n\
              FinalLocs = [ FinalRow | RestOfRows ].\n\n")
 
 
-def is_Barcenas_around(x, y, n, smell):
+def is_Barcenas_around(x, y, smell):
     if smell == 0:
         opSmell = 1
     else:
@@ -51,19 +51,10 @@ def is_Barcenas_around(x, y, n, smell):
     return l
 
 
-def write_with_semll_X(pl, n, smell):
-    for x in xrange(1, n + 1):
-        for y in xrange(1, n + 1):
-            pl.write("iSBarcenasAround( " + str(x) + ", "
-                     + str(y) + ", " + str(smell) + ", " +
-                     str(is_Barcenas_around(x, y, n, smell)) + " ).\n")
-
-
-def write_Barcenas_around(pl, n):
-    write_with_semll_X(pl, n, 0)
-    pl.write("\n")
-    write_with_semll_X(pl, n, 1)
-    pl.write("\n")
+def  write_Barcenas_around(pl, x, y, smell):
+    pl.write("iSBarcenasAround( " + str(x) + ", "
+             + str(y) + ", " + str(smell) + ", " +
+             str(is_Barcenas_around(x, y, smell)) + " ).\n")
 
 
 def is_Barcenas_on_left(x, y, n, left):
@@ -86,21 +77,36 @@ def is_Barcenas_on_left(x, y, n, left):
     return l
 
 
-def write_Barcenas_on_left(pl, n, left):
-    for x in xrange(1, n + 1):
-        for y in xrange(1, n + 1):
-            pl.write("iSBarcenasOnLeft( " + str(x) + ", " + str(y) +
-                     ", " + str(left) + ", " +
-                     str(is_Barcenas_on_left(x, y, n, left)) + " ).\n")
+def write_Barcenas_on_left(pl, n, x, y, left):
+    pl.write("iSBarcenasOnLeft( " + str(x) + ", " + str(y) +
+             ", " + str(left) + ", " +
+             str(is_Barcenas_on_left(x, y, n, left)) + " ).\n")
 
 
-def write_answer_of_Mariano(pl, n):
+def write_answers_of_Mariano(pl, n, mariano_lies, marianos_answers):
     # 1 true, Barcenas is on his left
-    # 0 fakse, Barcenas isn't on his left
-    write_Barcenas_on_left(pl, n, 1)
+    # 0 false, Barcenas isn't on his left
+    for step in marianos_answers:
+        x, y, mariano = step
+        write_Barcenas_on_left(pl, n, x, y, (mariano+mariano_lies)%2)
+
+    
+
+def walk(pl, steps, n):
+    marianos_answers = []
+    mariano_lies = False
+    for step in steps:
+        x, y, smell, mariano, cospe = step
+        write_Barcenas_around(pl, x, y, smell)
+        if mariano != -1:
+            marianos_answers.append([x, y, mariano])
+        if cospe != -1:
+            mariano_lies = cospe
     pl.write("\n")
-    write_Barcenas_on_left(pl, n, 0)
-    pl.write("\n")
+    return mariano_lies, marianos_answers
+
+
+        
 
 
 if __name__ == "__main__":
@@ -114,7 +120,7 @@ if __name__ == "__main__":
     steps = parse(sys.argv[2])
     pl = open("BarcenasWorld.pl", "w")
     write_intersections(pl)
-    write_Barcenas_around(pl, n)
-    write_answer_of_Mariano(pl, n)
+    mariano_lies, marianos_answers = walk(pl, steps, n)
+    write_answers_of_Mariano(pl, n, mariano_lies, marianos_answers)
 
     pl.close()
