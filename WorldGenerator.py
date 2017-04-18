@@ -52,7 +52,7 @@ def is_Barcenas_around(x, y, smell):
 
 
 def  write_Barcenas_around(pl, x, y, smell):
-    pl.write("iSBarcenasAround( " + str(x) + ", "
+    pl.write("isBarcenasAround( " + str(x) + ", "
              + str(y) + ", " + str(smell) + ", " +
              str(is_Barcenas_around(x, y, smell)) + " ).\n")
 
@@ -78,7 +78,7 @@ def is_Barcenas_on_left(x, y, n, left):
 
 
 def write_Barcenas_on_left(pl, n, x, y, left):
-    pl.write("iSBarcenasOnLeft( " + str(x) + ", " + str(y) +
+    pl.write("isBarcenasOnLeft( " + str(x) + ", " + str(y) +
              ", " + str(left) + ", " +
              str(is_Barcenas_on_left(x, y, n, left)) + " ).\n")
 
@@ -90,9 +90,13 @@ def write_answers_of_Mariano(pl, n, mariano_lies, marianos_answers):
         x, y, mariano = step
         write_Barcenas_on_left(pl, n, x, y, (mariano+mariano_lies)%2)
 
-    
+def write_null_answers_of_Mariano(pl, n, marianos_null_answers):
+    for step in marianos_null_answers:
+        x, y, mariano = step
+        write_Barcenas_on_left(pl, n, x, y, mariano)
 
 def walk(pl, steps, n):
+    marianos_null_answers = []
     marianos_answers = []
     mariano_lies = False
     for step in steps:
@@ -100,10 +104,12 @@ def walk(pl, steps, n):
         write_Barcenas_around(pl, x, y, smell)
         if mariano != -1:
             marianos_answers.append([x, y, mariano])
+        else:
+            marianos_null_answers.append([x, y, mariano])
         if cospe != -1:
             mariano_lies = cospe
     pl.write("\n")
-    return mariano_lies, marianos_answers
+    return mariano_lies, marianos_answers, marianos_null_answers
 
 
         
@@ -118,9 +124,11 @@ if __name__ == "__main__":
     n = int(sys.argv[1])
 
     steps = parse(sys.argv[2])
+    print steps
     pl = open("BarcenasWorld.pl", "w")
     write_intersections(pl)
-    mariano_lies, marianos_answers = walk(pl, steps, n)
+    mariano_lies, marianos_answers, marianos_null_answers = walk(pl, steps, n)
+    write_null_answers_of_Mariano(pl, n, marianos_null_answers)
     write_answers_of_Mariano(pl, n, mariano_lies, marianos_answers)
 
     pl.close()
