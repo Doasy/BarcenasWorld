@@ -51,13 +51,13 @@ def is_Barcenas_around(x, y, smell):
     return l
 
 
-def  write_Barcenas_around(pl, x, y, smell):
+def write_barcenas_around(pl, x, y, smell):
     pl.write("isBarcenasAround( " + str(x) + ", "
              + str(y) + ", " + str(smell) + ", " +
              str(is_Barcenas_around(x, y, smell)) + " ).\n")
 
 
-def is_Barcenas_on_left(x, y, n, left):
+def is_barcenas_on_left(x, y, n, left):
     x -= 1
     y -= 1
     l = []
@@ -77,19 +77,19 @@ def is_Barcenas_on_left(x, y, n, left):
     return l
 
 
-def write_Barcenas_on_left(pl, n, x, y, left):
+def write_barcenas_on_left(pl, n, x, y, left):
     pl.write("isBarcenasOnLeft( " + str(x) + ", " + str(y) +
              ", " + str(left) + ", " +
-             str(is_Barcenas_on_left(x, y, n, left)) + " ).\n")
+             str(is_barcenas_on_left(x, y, n, left)) + " ).\n")
 
 
-def write_answers_of_Mariano(pl, n, marianos_answers):
+def write_answers_of_mariano(pl, n, marianos_answers):
     # 1 true, Barcenas is on his left
     # 0 false, Barcenas isn't on his left
-    #-1 NS/NC
+    # -1 NS/NC
     for step in marianos_answers:
         x, y, mariano = step
-        write_Barcenas_on_left(pl, n, x, y, mariano)
+        write_barcenas_on_left(pl, n, x, y, mariano)
 
 
 def walk(pl, steps, n):
@@ -98,7 +98,7 @@ def walk(pl, steps, n):
     mariano_lies = -1
     for step in steps:
         x, y, smell, mariano, cospe = step
-        write_Barcenas_around(pl, x, y, smell)
+        write_barcenas_around(pl, x, y, smell)
         if mariano != -1:
             marianos_answers.append([x, y, mariano])
         else:
@@ -108,7 +108,8 @@ def walk(pl, steps, n):
     pl.write("\n")
     return mariano_lies, marianos_answers, marianos_null_answers
 
-def write_update_pos_Barcenas_locs(pl):
+
+def write_update_pos_barcenas_locs(pl):
     pl.write("updatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, FinalLocs )\n\
    :-\n\
       isBarcenasAround( AgentPosX, AgentPosY, SmellXY, AfterSmell ),\n\
@@ -116,6 +117,7 @@ def write_update_pos_Barcenas_locs(pl):
       isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, NewLocs ),\n\
       intersectLocs( Locs, NewLocs, FinalLocs ), !,\n\
       write( 'Estado resultante: ' ), write( FinalLocs ), nl.\n\n")
+
 
 def write_update_seq_of_steps(pl):
     pl.write("updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: ' ), write(FS ), nl.\n\n")
@@ -128,9 +130,10 @@ def write_update_seq_of_steps(pl):
         write([X,Y,S,M]),\n\
         updatePosBarcenasLocs( PrevLocs, X, Y, S, M, NextLocs ),\n\
         updateSequenceOfSteps( NextLocs, T, FS ).\n\n")
-        
-def write_answers_of_Cospedal(pl, mariano_lies):
-    pl.write("Lies :- " + str(mariano_lies)+"\n")
+
+
+def write_answers_of_cospedal(pl, mariano_lies):
+    pl.write("Lies :- " + str(mariano_lies) + "\n")
     pl.write("intersectLies(0, X, X).\n\
 intersectLies(-1, Y, Y).\n\
 intersectLies(1, 1, 0).\n\
@@ -160,10 +163,10 @@ if __name__ == "__main__":
     pl.write(":- use_module(library(lists)).\n\n")
     write_intersections(pl)
     mariano_lies, marianos_answers, marianos_null_answers = walk(pl, steps, n)
-    write_answers_of_Cospedal(pl, mariano_lies)
-    write_answers_of_Mariano(pl, n, marianos_null_answers)
-    write_answers_of_Mariano(pl, n, marianos_answers)
-    write_update_pos_Barcenas_locs(pl)
+    write_answers_of_cospedal(pl, mariano_lies)
+    write_answers_of_mariano(pl, n, marianos_null_answers)
+    write_answers_of_mariano(pl, n, marianos_answers)
+    write_update_pos_barcenas_locs(pl)
     write_update_seq_of_steps(pl)
 
     pl.close()
