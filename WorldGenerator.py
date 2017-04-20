@@ -110,11 +110,12 @@ def walk(pl, steps, n):
 
 
 def write_update_pos_barcenas_locs(pl):
-    pl.write("updatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, FinalLocs )\n\
+    pl.write("\nupdatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, Cospedal, FinalLocs )\n\
    :-\n\
       isBarcenasAround( AgentPosX, AgentPosY, SmellXY, AfterSmell ),\n\
       intersectLocs( PrevLocs, AfterSmell, Locs ), !,\n\
       isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, NewLocs ),\n\
+      intersectMarianoLies( Lies, MarianoLocs, NewLocs ),\n\
       intersectLocs( Locs, NewLocs, FinalLocs ), !,\n\
       write( 'Estado resultante: ' ), write( FinalLocs ), nl.\n\n")
 
@@ -128,7 +129,7 @@ def write_update_seq_of_steps(pl):
         nth0(2, H, S),\n\
         nth0(3, H, M),\n\
         write([X,Y,S,M]),\n\
-        updatePosBarcenasLocs( PrevLocs, X, Y, S, M, NextLocs ),\n\
+        updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies,NextLocs ),\n\
         updateSequenceOfSteps( NextLocs, T, FS ).\n\n")
 
 

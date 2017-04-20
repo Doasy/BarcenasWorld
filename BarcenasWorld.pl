@@ -1,5 +1,7 @@
 :- use_module(library(lists)).
 
+Lies :- 1
+
 intersectLocInfo( 0, _, 0 ).
 intersectLocInfo( _, 0, 0 ).
 intersectLocInfo( 1, Y, Y ).
@@ -16,11 +18,6 @@ intersectLocs( [PrevRow|PrevLocs], [NewRow|NewLocs], FinalLocs ) :-
              intersectLocs( PrevLocs, NewLocs, RestOfRows ),
              FinalLocs = [ FinalRow | RestOfRows ].
 
-isBarcenasAround( 1, 2, 0, [[0, 0, 0], [1, 0, 1], [1, 1, 1]] ).
-isBarcenasAround( 2, 2, 0, [[0, 0, 1], [0, 0, 0], [1, 0, 1]] ).
-isBarcenasAround( 2, 3, 1, [[0, 0, 1], [0, 1, 1], [0, 0, 1]] ).
-
-Lies :- 1
 intersectLies(0, X, X).
 intersectLies(-1, Y, Y).
 intersectLies(1, 1, 0).
@@ -37,16 +34,24 @@ intersectMarianoLies( Lies, [PrevRow|PrevLocs], FinalLocs ) :-
              intersectMarianoLies( Lies, PrevLocs, RestOfRows ),
              FinalLocs = [ FinalRow | RestOfRows ].
 
+isBarcenasAround( 1, 2, 0, [[0, 0, 0], [1, 0, 1], [1, 1, 1]] ).
+isBarcenasAround( 2, 2, 0, [[0, 0, 1], [0, 0, 0], [1, 0, 1]] ).
+isBarcenasAround( 2, 3, 1, [[0, 0, 1], [0, 1, 1], [0, 0, 1]] ).
+
+
 isBarcenasOnLeft( 2, 3, -1, [[0, 0, 1], [0, 0, 0], [0, 0, 1]] ).
 isBarcenasOnLeft( 1, 2, 0, [[0, 1, 1], [0, 1, 1], [0, 1, 1]] ).
 isBarcenasOnLeft( 2, 2, 1, [[0, 0, 0], [1, 0, 0], [1, 0, 0]] ).
-updatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, FinalLocs )
+
+updatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, Cospedal, FinalLocs )
    :-
       isBarcenasAround( AgentPosX, AgentPosY, SmellXY, AfterSmell ),
       intersectLocs( PrevLocs, AfterSmell, Locs ), !,
       isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, NewLocs ),
+      intersectMarianoLies( Lies, MarianoLocs, NewLocs ),
       intersectLocs( Locs, NewLocs, FinalLocs ), !,
       write( 'Estado resultante: ' ), write( FinalLocs ), nl.
+
 
 updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: ' ), write(FS ), nl.
 
@@ -57,6 +62,8 @@ updateSequenceOfSteps( PrevLocs, [H|T], FS )
         nth0(2, H, S),
         nth0(3, H, M),
         write([X,Y,S,M]),
-        updatePosBarcenasLocs( PrevLocs, X, Y, S, M, NextLocs ),
+        updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies, NextLocs ),
         updateSequenceOfSteps( NextLocs, T, FS ).
+
+
 
