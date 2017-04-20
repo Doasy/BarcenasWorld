@@ -114,7 +114,7 @@ def write_update_pos_barcenas_locs(pl):
    :-\n\
       isBarcenasAround( AgentPosX, AgentPosY, SmellXY, AfterSmell ),\n\
       intersectLocs( PrevLocs, AfterSmell, Locs ), !,\n\
-      isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, NewLocs ),\n\
+      isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, MarianoLocs ),\n\
       intersectMarianoLies( Lies, MarianoLocs, NewLocs ),\n\
       intersectLocs( Locs, NewLocs, FinalLocs ), !,\n\
       write( 'Estado resultante: ' ), write( FinalLocs ), nl.\n\n")
