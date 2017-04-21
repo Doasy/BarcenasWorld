@@ -67,7 +67,6 @@ updateSequenceOfSteps( PrevLocs, [H|T], FS )
         nth0(1, H, Y),
         nth0(2, H, S),
         nth0(3, H, M),
-        write([X,Y,S,M]),
         updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies,NextLocs ),
         updateSequenceOfSteps( NextLocs, T, FS ).
 

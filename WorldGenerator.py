@@ -29,7 +29,6 @@ def parse_list(input_list):
             tmp=[]
         else:
             tmp.append(int(i))
-    print new_list
     return new_list
 
 # Write in the BarcenasWorld.pl file the premade intersectLoc clauses
@@ -192,7 +191,6 @@ def write_update_seq_of_steps(pl):
         nth0(1, H, Y),\n\
         nth0(2, H, S),\n\
         nth0(3, H, M),\n\
-        write([X,Y,S,M]),\n\
         updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies,NextLocs ),\n\
         updateSequenceOfSteps( NextLocs, T, FS ).\n\n")
 
