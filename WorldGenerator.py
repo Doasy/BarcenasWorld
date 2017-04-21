@@ -242,6 +242,7 @@ if __name__ == "__main__":
     else:
         steps = list(parse_list(sys.argv[2]))
     pl = open("BarcenasWorld.pl", "w")
+    pl.write(":- style_check(-singleton).\n")
     pl.write(":- use_module(library(lists)).\n\n")
     write_intersections(pl)
     mariano_lies, marianos_answers, marianos_null_answers = walk(pl, steps, n)
@@ -258,5 +259,5 @@ if __name__ == "__main__":
     # and makes the query call updateSequenceOfSteps with all the steps
 
     initial = make_initial(n)
-    command = 'swipl -f init.pl -s BarcenasWorld.pl -g "updateSequenceOfSteps(' +str(initial) +", " +str(steps) +',FS),halt"'
+    command = 'swipl -q -f init.pl -s BarcenasWorld.pl -g "updateSequenceOfSteps(' +str(initial) +", " +str(steps) +',FS),halt"'
     os.system(command)

@@ -1,3 +1,4 @@
+:- style_check(-singleton).
 :- use_module(library(lists)).
 
 intersectLocInfo( 0, _, 0 ).
