@@ -1,4 +1,4 @@
-import sys
+import sys, re
 
 
 def parse(filename):
@@ -9,6 +9,21 @@ def parse(filename):
             steps.append(line)
     return steps
 
+def parse_list(input_list):
+    tmp = []
+    new_list = []
+    input_list = list(input_list.split(','))
+    for i in input_list:
+        i = i.replace("[", "")
+        if(i.endswith("]")):
+            i = i.replace("]", "")
+            tmp.append(int(i))
+            new_list.append(tmp)
+            tmp=[]
+        else:
+            tmp.append(int(i))
+    print new_list
+    return new_list
 
 def write_intersections(pl):
     pl.write("intersectLocInfo( 0, _, 0 ).\n\
@@ -100,7 +115,7 @@ writeFinalState( [F|FS] ):-\n\
         write(F),\n\
         write('\n'),\n\
         writeFinalState(FS).\n\n")
-    
+
 
 def walk(pl, steps, n):
     marianos_null_answers = []
@@ -163,14 +178,15 @@ intersectMarianoLies( M, Lies, [PrevRow|PrevLocs], FinalLocs ) :-\n\
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         print "error"
         sys.exit(-1)
 
     n = int(sys.argv[1])
-
-    steps = parse(sys.argv[2])
-    print steps
+    if sys.argv[2].endswith(".txt"):
+        steps = list(parse(sys.argv[2]))
+    else:
+        steps = list(parse_list(sys.argv[2]))
     pl = open("BarcenasWorld.pl", "w")
     pl.write(":- use_module(library(lists)).\n\n")
     write_intersections(pl)
