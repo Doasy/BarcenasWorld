@@ -45,15 +45,23 @@ updatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, Cosp
       intersectLocs( PrevLocs, AfterSmell, Locs ), !,
       isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, MarianoLocs ),
       intersectMarianoLies( MarianoXY, Cospedal, MarianoLocs, NewLocs ),
-      intersectLocs( Locs, NewLocs, FinalLocs ), !,
-      write( 'Estado resultante: ' ), write( FinalLocs ), nl.
+      intersectLocs( Locs, NewLocs, FinalLocs ), !, nl.
+
+writeFinalState( [] ).
+writeFinalState( [F|FS] ):-
+        write(F),
+        write('
+'),
+        writeFinalState(FS).
 
 set(N, Lies) :- Lies is N.
-updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: ' ), write(FS ), nl.
+
+updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: 
+' ), writeFinalState(FS), nl.
 
 updateSequenceOfSteps( PrevLocs, [H|T], FS )
     :-
-        set( 0, Lies ),
+        set( 1, Lies ),
         nth0(0, H, X),
         nth0(1, H, Y),
         nth0(2, H, S),

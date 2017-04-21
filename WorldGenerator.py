@@ -94,6 +94,13 @@ def write_answers_of_mariano(pl, n, marianos_answers):
         write_barcenas_on_left(pl, n, x, y, mariano)
 
 
+def write_map(pl):
+    pl.write("writeFinalState( [] ).\n\
+writeFinalState( [F|FS] ):-\n\
+        write(F),\n\
+        write('\n'),\n\
+        writeFinalState(FS).\n\n")
+
 def walk(pl, steps, n):
     marianos_null_answers = []
     marianos_answers = []
@@ -118,13 +125,12 @@ def write_update_pos_barcenas_locs(pl):
       intersectLocs( PrevLocs, AfterSmell, Locs ), !,\n\
       isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, MarianoLocs ),\n\
       intersectMarianoLies( MarianoXY, Cospedal, MarianoLocs, NewLocs ),\n\
-      intersectLocs( Locs, NewLocs, FinalLocs ), !,\n\
-      write( 'Estado resultante: ' ), write( FinalLocs ), nl.\n\n")
+      intersectLocs( Locs, NewLocs, FinalLocs ), !, nl.\n\n")
 
 
 def write_update_seq_of_steps(pl):
-    pl.write("set(N, Lies) :- Lies is N.\n")
-    pl.write("updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: ' ), write(FS ), nl.\n\n")
+    pl.write("set(N, Lies) :- Lies is N.\n\n")
+    pl.write("updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: \n' ), writeFinalState(FS), nl.\n\n")
     pl.write("updateSequenceOfSteps( PrevLocs, [H|T], FS )\n\
     :-\n\
         set( " + str(mariano_lies) +", Lies ),\n\
@@ -172,6 +178,7 @@ if __name__ == "__main__":
     write_answers_of_mariano(pl, n, marianos_null_answers)
     write_answers_of_mariano(pl, n, marianos_answers)
     write_update_pos_barcenas_locs(pl)
+    write_map(pl)
     write_update_seq_of_steps(pl)
 
     pl.close()
