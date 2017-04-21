@@ -192,7 +192,6 @@ def write_update_seq_of_steps(pl):
         nth0(1, H, Y),\n\
         nth0(2, H, S),\n\
         nth0(3, H, M),\n\
-        write([X,Y,S,M]),\n\
         updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies,NextLocs ),\n\
         updateSequenceOfSteps( NextLocs, T, FS ).\n\n")
 
