@@ -16,44 +16,44 @@ intersectLocs( [PrevRow|PrevLocs], [NewRow|NewLocs], FinalLocs ) :-
              intersectLocs( PrevLocs, NewLocs, RestOfRows ),
              FinalLocs = [ FinalRow | RestOfRows ].
 
-isBarcenasAround( 1, 2, 0, [[0, 0, 0], [1, 0, 1], [1, 1, 1]] ).
-isBarcenasAround( 2, 2, 0, [[0, 0, 1], [0, 0, 0], [1, 0, 1]] ).
-isBarcenasAround( 2, 3, 1, [[0, 0, 1], [0, 1, 1], [0, 0, 1]] ).
+isBarcenasAround( 3, 3, 0, [[0, 1, 1, 1], [1, 1, 0, 1], [1, 0, 0, 0], [1, 1, 0, 1]] ).
+isBarcenasAround( 3, 4, 0, [[0, 1, 1, 1], [1, 1, 1, 0], [1, 1, 0, 0], [1, 1, 1, 0]] ).
 
-Lies :- 1
-intersectLies(0, X, X).
-intersectLies(-1, Y, Y).
-intersectLies(1, 1, 0).
-intersectLies(1, 0, 1).
+intersectLies( -1, X, 1, 1).
+intersectLies( M, 1, 1, 0).
+intersectLies( M, 1, 0, 1).
+intersectLies( M, 0, X, X).
+intersectLies( M, -1, Y, Y).
 
-intersectRowMarianoLies( Lies, [], [] ).
-intersectRowMarianoLies( Lies, [PH|PT], [FH|FT] ) :-
-             intersectLies( Lies, PH, FH ),
-             intersectRowMarianoLies( Lies, PT, FT ).
+intersectRowMarianoLies( M, Lies, [], [] ).
+intersectRowMarianoLies( M, Lies, [PH|PT], [FH|FT] ) :-
+             intersectLies( M, Lies, PH, FH ),
+             intersectRowMarianoLies( M, Lies, PT, FT ).
 
-intersectMarianoLies( Lies, [], [] ).
-intersectMarianoLies( Lies, [PrevRow|PrevLocs], FinalLocs ) :-
-             intersectRowMarianoLies( Lies, PrevRow, FinalRow ),
-             intersectMarianoLies( Lies, PrevLocs, RestOfRows ),
+intersectMarianoLies( M, Lies, [], [] ).
+intersectMarianoLies( M, Lies, [PrevRow|PrevLocs], FinalLocs ) :-
+             intersectRowMarianoLies( M, Lies, PrevRow, FinalRow ),
+             intersectMarianoLies( M, Lies, PrevLocs, RestOfRows ),
              FinalLocs = [ FinalRow | RestOfRows ].
 
-isBarcenasOnLeft( 2, 3, -1, [[1, 1, 1], [1, 1, 1], [1, 1, 1]] ).
-isBarcenasOnLeft( 1, 2, 0, [[0, 1, 1], [0, 1, 1], [0, 1, 1]] ).
-isBarcenasOnLeft( 2, 2, 1, [[0, 0, 0], [1, 0, 0], [1, 0, 0]] ).
+isBarcenasOnLeft( 3, 4, -1, [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]] ).
+isBarcenasOnLeft( 3, 3, 1, [[0, 1, 0, 0], [1, 1, 0, 0], [1, 1, 0, 0], [1, 1, 0, 0]] ).
 
 updatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, Cospedal, FinalLocs )
    :-
       isBarcenasAround( AgentPosX, AgentPosY, SmellXY, AfterSmell ),
       intersectLocs( PrevLocs, AfterSmell, Locs ), !,
       isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, MarianoLocs ),
-      intersectMarianoLies( Lies, MarianoLocs, NewLocs ),
+      intersectMarianoLies( MarianoXY, Cospedal, MarianoLocs, NewLocs ),
       intersectLocs( Locs, NewLocs, FinalLocs ), !,
       write( 'Estado resultante: ' ), write( FinalLocs ), nl.
 
+set(N, Lies) :- Lies is N.
 updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: ' ), write(FS ), nl.
 
 updateSequenceOfSteps( PrevLocs, [H|T], FS )
     :-
+        set( 0, Lies ),
         nth0(0, H, X),
         nth0(1, H, Y),
         nth0(2, H, S),

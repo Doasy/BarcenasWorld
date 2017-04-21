@@ -117,15 +117,17 @@ def write_update_pos_barcenas_locs(pl):
       isBarcenasAround( AgentPosX, AgentPosY, SmellXY, AfterSmell ),\n\
       intersectLocs( PrevLocs, AfterSmell, Locs ), !,\n\
       isBarcenasOnLeft( AgentPosX, AgentPosY, MarianoXY, MarianoLocs ),\n\
-      intersectMarianoLies( Lies, MarianoLocs, NewLocs ),\n\
+      intersectMarianoLies( MarianoXY, Cospedal, MarianoLocs, NewLocs ),\n\
       intersectLocs( Locs, NewLocs, FinalLocs ), !,\n\
       write( 'Estado resultante: ' ), write( FinalLocs ), nl.\n\n")
 
 
 def write_update_seq_of_steps(pl):
+    pl.write("set(N, Lies) :- Lies is N.\n")
     pl.write("updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: ' ), write(FS ), nl.\n\n")
     pl.write("updateSequenceOfSteps( PrevLocs, [H|T], FS )\n\
     :-\n\
+        set( " + str(mariano_lies) +", Lies ),\n\
         nth0(0, H, X),\n\
         nth0(1, H, Y),\n\
         nth0(2, H, S),\n\
@@ -136,19 +138,19 @@ def write_update_seq_of_steps(pl):
 
 
 def write_answers_of_cospedal(pl, mariano_lies):
-    pl.write("Lies :- " + str(mariano_lies) + "\n")
-    pl.write("intersectLies(0, X, X).\n\
-intersectLies(-1, Y, Y).\n\
-intersectLies(1, 1, 0).\n\
-intersectLies(1, 0, 1).\n\n")
-    pl.write("intersectRowMarianoLies( Lies, [], [] ).\n\
-intersectRowMarianoLies( Lies, [PH|PT], [FH|FT] ) :-\n\
-             intersectLies( Lies, PH, FH ),\n\
-             intersectRowMarianoLies( Lies, PT, FT ).\n\n")
-    pl.write("intersectMarianoLies( Lies, [], [] ).\n\
-intersectMarianoLies( Lies, [PrevRow|PrevLocs], FinalLocs ) :-\n\
-             intersectRowMarianoLies( Lies, PrevRow, FinalRow ),\n\
-             intersectMarianoLies( Lies, PrevLocs, RestOfRows ),\n\
+    pl.write("intersectLies( -1, X, 1, 1).\n\
+intersectLies( M, 1, 1, 0).\n\
+intersectLies( M, 1, 0, 1).\n\
+intersectLies( M, 0, X, X).\n\
+intersectLies( M, -1, Y, Y).\n\n")
+    pl.write("intersectRowMarianoLies( M, Lies, [], [] ).\n\
+intersectRowMarianoLies( M, Lies, [PH|PT], [FH|FT] ) :-\n\
+             intersectLies( M, Lies, PH, FH ),\n\
+             intersectRowMarianoLies( M, Lies, PT, FT ).\n\n")
+    pl.write("intersectMarianoLies( M, Lies, [], [] ).\n\
+intersectMarianoLies( M, Lies, [PrevRow|PrevLocs], FinalLocs ) :-\n\
+             intersectRowMarianoLies( M, Lies, PrevRow, FinalRow ),\n\
+             intersectMarianoLies( M, Lies, PrevLocs, RestOfRows ),\n\
              FinalLocs = [ FinalRow | RestOfRows ].\n\n")
 
 
