@@ -1,5 +1,8 @@
-import sys, os
+import sys
+import os
 
+
+# Parse file with sequence of steps to take
 
 def parse(filename):
     steps = []
@@ -8,6 +11,7 @@ def parse(filename):
             line = map(int, line.split())
             steps.append(line)
     return steps
+
 
 def parse_list(input_list):
     tmp = []
@@ -24,6 +28,8 @@ def parse_list(input_list):
             tmp.append(int(i))
     print new_list
     return new_list
+
+# Write in the BarcenasWorld.pl file the premade intersectLoc clauses
 
 def write_intersections(pl):
     pl.write("intersectLocInfo( 0, _, 0 ).\n\
@@ -42,6 +48,10 @@ intersectLocs( [PrevRow|PrevLocs], [NewRow|NewLocs], FinalLocs ) :-\n\
              intersectLocs( PrevLocs, NewLocs, RestOfRows ),\n\
              FinalLocs = [ FinalRow | RestOfRows ].\n\n")
 
+
+# Examines the sensor smell results to determine
+# which positions are possible Barcenas locations,
+# in order to create the prolog clause.
 
 def is_Barcenas_around(x, y, smell):
     if smell == 0:
@@ -66,11 +76,18 @@ def is_Barcenas_around(x, y, smell):
     return l
 
 
+# Write in BarcenasWorld.pl the clauses that determinate which positions
+# can't be possible solutions based on the information returned by is_Barcenas_around
+
 def write_barcenas_around(pl, x, y, smell):
     pl.write("isBarcenasAround( " + str(x) + ", "
              + str(y) + ", " + str(smell) + ", " +
              str(is_Barcenas_around(x, y, smell)) + " ).\n")
 
+
+# Examines the answers by Mariano to determine
+# which positions are possible Barcenas locations,
+# in order to create the prolog clause.
 
 def is_barcenas_on_left(x, y, n, left):
     x -= 1
@@ -94,20 +111,29 @@ def is_barcenas_on_left(x, y, n, left):
     return l
 
 
+# Write in BarcenasWorld.pl the clauses that determinate which positions
+# can't be possible solutions based on the information returned by the
+# function is_barcenas_on_left 
+
 def write_barcenas_on_left(pl, n, x, y, left):
     pl.write("isBarcenasOnLeft( " + str(x) + ", " + str(y) +
              ", " + str(left) + ", " +
              str(is_barcenas_on_left(x, y, n, left)) + " ).\n")
 
 
+# For each step, write the clause isBarcenasOnLeft refering to that position
+
 def write_answers_of_mariano(pl, n, marianos_answers):
     # 1 true, Barcenas is on his left
     # 0 false, Barcenas isn't on his left
-    # -1 NS/NC
+    # -1 N/A
     for step in marianos_answers:
         x, y, mariano = step
         write_barcenas_on_left(pl, n, x, y, mariano)
 
+
+# Write in BarcenasWorld.pl the function that
+# prints the final possible solutions on a cleaner way
 
 def write_map(pl):
     pl.write("writeFinalState( [] ).\n\
@@ -116,6 +142,10 @@ writeFinalState( [F|FS] ):-\n\
         write('\n'),\n\
         writeFinalState(FS).\n\n")
 
+
+# Examines the steps and calls write_barcenas_around,
+# so it only writes a clause in BarcenasWorld.pl if the 
+# clause is used to solve the instance of the problem
 
 def walk(pl, steps, n):
     marianos_null_answers = []
@@ -134,6 +164,9 @@ def walk(pl, steps, n):
     return mariano_lies, marianos_answers, marianos_null_answers
 
 
+# Write in BarcenasWorld.pl the function that updates the possible solutions
+# given a position, the results of the smell sensor, and what Mariano and Cospedal say
+
 def write_update_pos_barcenas_locs(pl):
     pl.write("\nupdatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, Cospedal, FinalLocs )\n\
    :-\n\
@@ -143,6 +176,8 @@ def write_update_pos_barcenas_locs(pl):
       intersectMarianoLies( MarianoXY, Cospedal, MarianoLocs, NewLocs ),\n\
       intersectLocs( Locs, NewLocs, FinalLocs ), !, nl.\n\n")
 
+# Write in BarcenasWorld.pl the recursive function that takes the sequence of steps
+# and passes them to to updatePosBarcenasLocs, one at a time
 
 def write_update_seq_of_steps(pl):
     pl.write("set(N, Lies) :- Lies is N.\n\n")
@@ -158,6 +193,9 @@ def write_update_seq_of_steps(pl):
         updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies,NextLocs ),\n\
         updateSequenceOfSteps( NextLocs, T, FS ).\n\n")
 
+
+# Write in BarcenasWorld.pl the clauses refering to the intersectLoc
+# used to adapt Mariano's answer to what Cospedal says about them
 
 def write_answers_of_cospedal(pl, mariano_lies):
     pl.write("intersectLies( -1, X, 1, 1).\n\
@@ -176,9 +214,22 @@ intersectMarianoLies( M, Lies, [PrevRow|PrevLocs], FinalLocs ) :-\n\
              FinalLocs = [ FinalRow | RestOfRows ].\n\n")
 
 
+# Create the list that shows the possible initial locations of Barcenas
+
+def make_initial(n):
+    initial = []
+    for _ in xrange(n):
+        initial.append(list(1 for _ in xrange(n)))
+    initial[0][0] = 0
+    return initial   
+
+
+# Main function. Check errors on the program call, parse steps, 
+# create the prolog program and execute it with the corresponding query
+
 if __name__ == "__main__":
 
-    if len(sys.argv) < 3:
+    if len(sys.argv) != 3:
         print "error"
         sys.exit(-1)
 
@@ -199,3 +250,10 @@ if __name__ == "__main__":
     write_update_seq_of_steps(pl)
 
     pl.close()
+
+    # The command that initiates the swipl environment with BarcenasWorld.pl
+    # and makes the query call updateSequenceOfSteps with all the steps
+
+    initial = make_initial(n)
+    command = 'swipl -f init.pl -s BarcenasWorld.pl -g "updateSequenceOfSteps(' +str(initial) +", " +str(steps) +',FS),halt"'
+    os.system(command)
