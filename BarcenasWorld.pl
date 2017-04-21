@@ -37,7 +37,7 @@ intersectMarianoLies( Lies, [PrevRow|PrevLocs], FinalLocs ) :-
              intersectMarianoLies( Lies, PrevLocs, RestOfRows ),
              FinalLocs = [ FinalRow | RestOfRows ].
 
-isBarcenasOnLeft( 2, 3, -1, [[0, 0, 1], [0, 0, 0], [0, 0, 1]] ).
+isBarcenasOnLeft( 2, 3, -1, [[1, 1, 1], [1, 1, 1], [1, 1, 1]] ).
 isBarcenasOnLeft( 1, 2, 0, [[0, 1, 1], [0, 1, 1], [0, 1, 1]] ).
 isBarcenasOnLeft( 2, 2, 1, [[0, 0, 0], [1, 0, 0], [1, 0, 0]] ).
 

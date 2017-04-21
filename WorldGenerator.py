@@ -63,13 +63,15 @@ def is_barcenas_on_left(x, y, n, left):
     l = []
     for _ in xrange(n):
         l.append(list(1 for _ in xrange(n)))
+    if left == -1:
+        return l
     l[x][y] = (left + 1) % 2
     l[0][0] = 0
     if left == 1:
         for row in l:
             for column in xrange(y, n):
                 row[column] = 0
-    else:
+    elif left == 0:
         for row in l:
             for column in xrange(0, y):
                 row[column] = 0
