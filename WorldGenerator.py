@@ -100,6 +100,7 @@ writeFinalState( [F|FS] ):-\n\
         write(F),\n\
         write('\n'),\n\
         writeFinalState(FS).\n\n")
+    
 
 def walk(pl, steps, n):
     marianos_null_answers = []
