@@ -1,4 +1,4 @@
-import sys, re
+import sys, os
 
 
 def parse(filename):
