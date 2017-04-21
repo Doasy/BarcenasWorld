@@ -13,6 +13,9 @@ def parse(filename):
     return steps
 
 
+# Parser used in case a list is passed through 
+# argvs instead of a file
+
 def parse_list(input_list):
     tmp = []
     new_list = []
