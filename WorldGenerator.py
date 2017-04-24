@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import sys
 import os
 
@@ -13,7 +15,7 @@ def parse(filename):
     return steps
 
 
-# Parser used in case a list is passed through 
+# Parser used in case a list is passed through
 # argvs instead of a file
 
 def parse_list(input_list):
@@ -26,12 +28,13 @@ def parse_list(input_list):
             i = i.replace("]", "")
             tmp.append(int(i))
             new_list.append(tmp)
-            tmp=[]
+            tmp = []
         else:
             tmp.append(int(i))
     return new_list
 
 # Write in the BarcenasWorld.pl file the premade intersectLoc clauses
+
 
 def write_intersections(pl):
     pl.write("intersectLocInfo( 0, _, 0 ).\n\
@@ -79,7 +82,8 @@ def is_Barcenas_around(x, y, smell):
 
 
 # Write in BarcenasWorld.pl the clauses that determinate which positions
-# can't be possible solutions based on the information returned by is_Barcenas_around
+# can't be possible solutions based on the information returned by
+# is_Barcenas_around
 
 def write_barcenas_around(pl, x, y, smell):
     pl.write("isBarcenasAround( " + str(x) + ", "
@@ -115,7 +119,7 @@ def is_barcenas_on_left(x, y, n, left):
 
 # Write in BarcenasWorld.pl the clauses that determinate which positions
 # can't be possible solutions based on the information returned by the
-# function is_barcenas_on_left 
+# function is_barcenas_on_left
 
 def write_barcenas_on_left(pl, n, x, y, left):
     pl.write("isBarcenasOnLeft( " + str(x) + ", " + str(y) +
@@ -146,7 +150,7 @@ writeFinalState( [F|FS] ):-\n\
 
 
 # Examines the steps and calls write_barcenas_around,
-# so it only writes a clause in BarcenasWorld.pl if the 
+# so it only writes a clause in BarcenasWorld.pl if the
 # clause is used to solve the instance of the problem
 
 def walk(pl, steps, n):
@@ -167,7 +171,8 @@ def walk(pl, steps, n):
 
 
 # Write in BarcenasWorld.pl the function that updates the possible solutions
-# given a position, the results of the smell sensor, and what Mariano and Cospedal say
+# given a position, the results of the smell sensor, and what Mariano and
+# Cospedal say
 
 def write_update_pos_barcenas_locs(pl):
     pl.write("\nupdatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, Cospedal, FinalLocs )\n\
@@ -181,17 +186,19 @@ def write_update_pos_barcenas_locs(pl):
 # Write in BarcenasWorld.pl the recursive function that takes the sequence of steps
 # and passes them to to updatePosBarcenasLocs, one at a time
 
+
 def write_update_seq_of_steps(pl):
     pl.write("set(N, Lies) :- Lies is N.\n\n")
     pl.write("updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final: \n' ), writeFinalState(FS), nl.\n\n")
     pl.write("updateSequenceOfSteps( PrevLocs, [H|T], FS )\n\
     :-\n\
-        set( " + str(mariano_lies) +", Lies ),\n\
+        set( " + str(mariano_lies) + ", Lies ),\n\
         nth0(0, H, X),\n\
         nth0(1, H, Y),\n\
         nth0(2, H, S),\n\
         nth0(3, H, M),\n\
         updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies,NextLocs ),\n\
+        write( 'Estado resultante: \n' ), writeFinalState(NextLocs), nl, \n\
         updateSequenceOfSteps( NextLocs, T, FS ).\n\n")
 
 
@@ -222,10 +229,10 @@ def make_initial(n):
     for _ in xrange(n):
         initial.append(list(1 for _ in xrange(n)))
     initial[0][0] = 0
-    return initial   
+    return initial
 
 
-# Main function. Check errors on the program call, parse steps, 
+# Main function. Check errors on the program call, parse steps,
 # create the prolog program and execute it with the corresponding query
 
 if __name__ == "__main__":
@@ -257,5 +264,6 @@ if __name__ == "__main__":
     # and makes the query call updateSequenceOfSteps with all the steps
 
     initial = make_initial(n)
-    command = 'swipl -q -f init.pl -s BarcenasWorld.pl -g "updateSequenceOfSteps(' +str(initial) +", " +str(steps) +',FS),halt"'
+    command = 'swipl -q -f init.pl -s BarcenasWorld.pl -g "updateSequenceOfSteps(' + str(
+        initial) + ", " + str(steps) + ',FS),halt"'
     os.system(command)

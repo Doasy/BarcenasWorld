@@ -17,8 +17,9 @@ intersectLocs( [PrevRow|PrevLocs], [NewRow|NewLocs], FinalLocs ) :-
              intersectLocs( PrevLocs, NewLocs, RestOfRows ),
              FinalLocs = [ FinalRow | RestOfRows ].
 
-isBarcenasAround( 3, 3, 0, [[0, 1, 1, 1], [1, 1, 0, 1], [1, 0, 0, 0], [1, 1, 0, 1]] ).
-isBarcenasAround( 3, 4, 0, [[0, 1, 1, 1], [1, 1, 1, 0], [1, 1, 0, 0], [1, 1, 1, 0]] ).
+isBarcenasAround( 6, 2, 0, [[0, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 0, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1]] ).
+isBarcenasAround( 5, 4, 0, [[0, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 0, 1, 1], [1, 1, 0, 0, 0, 1], [1, 1, 1, 0, 1, 1]] ).
+isBarcenasAround( 3, 5, 0, [[0, 1, 1, 1, 1, 1], [1, 1, 1, 1, 0, 1], [1, 1, 1, 0, 0, 0], [1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1]] ).
 
 intersectLies( -1, X, 1, 1).
 intersectLies( M, 1, 1, 0).
@@ -37,8 +38,9 @@ intersectMarianoLies( M, Lies, [PrevRow|PrevLocs], FinalLocs ) :-
              intersectMarianoLies( M, Lies, PrevLocs, RestOfRows ),
              FinalLocs = [ FinalRow | RestOfRows ].
 
-isBarcenasOnLeft( 3, 4, -1, [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]] ).
-isBarcenasOnLeft( 3, 3, 1, [[0, 1, 0, 0], [1, 1, 0, 0], [1, 1, 0, 0], [1, 1, 0, 0]] ).
+isBarcenasOnLeft( 6, 2, 0, [[0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1]] ).
+isBarcenasOnLeft( 5, 4, 0, [[0, 0, 0, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 0, 1, 1, 1]] ).
+isBarcenasOnLeft( 3, 5, 0, [[0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 1, 1]] ).
 
 updatePosBarcenasLocs( PrevLocs, AgentPosX, AgentPosY,  SmellXY, MarianoXY, Cospedal, FinalLocs )
    :-
@@ -62,11 +64,13 @@ updateSequenceOfSteps( FS, [], FS ):- write( 'Estado final:
 
 updateSequenceOfSteps( PrevLocs, [H|T], FS )
     :-
-        set( 1, Lies ),
+        set( 0, Lies ),
         nth0(0, H, X),
         nth0(1, H, Y),
         nth0(2, H, S),
         nth0(3, H, M),
         updatePosBarcenasLocs( PrevLocs, X, Y, S, M, Lies,NextLocs ),
+        write( 'Estado resultante: 
+' ), writeFinalState(NextLocs), nl, 
         updateSequenceOfSteps( NextLocs, T, FS ).
 
